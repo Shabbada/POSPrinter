@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Printer tanlang</h1>
+{% if printers %}
+    <form method="post" action="{% url 'print_receipt' %}">
+        {% csrf_token %}
+        <select name="printer">
+            {% for printer in printers %}
+                <option value="{{ printer.vendor_id }}:{{ printer.product_id }}">
+                    {{ printer.name }}
+                </option>
+            {% endfor %}
+        </select>
+        <input type="hidden" name="sale_id" value="{{ sale_id }}">
+        <button type="submit">Chop etish</button>
+    </form>
+{% else %}
+    <p>Hech qanday printer topilmadi. Iltimos, printeringiz ulangan va yoqilganligini tekshiring.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>POS Tizimi</h1>
+<div id="products">
+    {% for product in products %}
+    <button onclick="addToCart('{{ product.name }}', {{ product.price }})">
+        {{ product.name }} - {{ product.price }}
+    </button>
+    {% endfor %}
+</div>
+<div id="cart"></div>
+<div id="total">Jami: 0</div>
+<button onclick="checkout()">To'lov</button>
+
+<script>
+let cart = [];
+let total = 0;
+
+function addToCart(name, price) {
+    cart.push({name, price});
+    total += price;
+    updateCart();
+}
+
+function updateCart() {
+    let cartHtml = "<h2>Savat</h2>";
+    for (let item of cart) {
+        cartHtml += `<p>${item.name} - ${item.price}</p>`;
+    }
+    document.getElementById('cart').innerHTML = cartHtml;
+    document.getElementById('total').innerHTML = `Jami: ${total}`;
+}
+
+function checkout() {
+    let form = document.createElement('form');
+    form.method = 'POST';
+    form.action = "{% url 'checkout' %}";
+    
+    let csrfInput = document.createElement('input');
+    csrfInput.type = 'hidden';
+    csrfInput.name = 'csrfmiddlewaretoken';
+    csrfInput.value = "{{ csrf_token }}";
+    form.appendChild(csrfInput);
+    
+    let cartInput = document.createElement('input');
+    cartInput.type = 'hidden';
+    cartInput.name = 'cart';
+    cartInput.value = JSON.stringify(cart);
+    form.appendChild(cartInput);
+    
+    let totalInput = document.createElement('input');
+    totalInput.type = 'hidden';
+    totalInput.name = 'total';
+    totalInput.value = total;
+    form.appendChild(totalInput);
+    
+    document.body.appendChild(form);
+    form.submit();
+}
+</script>
+{% endblock %}
