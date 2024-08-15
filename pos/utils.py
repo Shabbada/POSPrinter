@@ -7,8 +7,9 @@ def get_available_printers():
     devices = usb.core.find(find_all=True)
     
     for dev in devices:
+        print(dev.bDeviceClass)
         try:
-            if dev.bDeviceClass == 7:  # Printer class
+            if dev:#.bDeviceClass == 7:  # Printer class
                 printer = {
                     'name': usb.util.get_string(dev, dev.iProduct),
                     'vendor_id': dev.idVendor,
